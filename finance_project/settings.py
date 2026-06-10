@@ -13,8 +13,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key-change-in-producti
 
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
-CSRF_TRUSTED_ORIGINS = ['https://*.up.railway.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*', '.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://*.up.railway.app', 'https://*.onrender.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
