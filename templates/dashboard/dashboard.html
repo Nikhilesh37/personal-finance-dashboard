@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — FinanceTrack{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stat Cards -->
+<div class="stat-cards">
+  <div class="stat-card">
+    <div class="d-flex align-center justify-between">
+      <span class="stat-label">Income (this month)</span>
+      <div class="stat-icon income"><i class="bi bi-arrow-down-circle"></i></div>
+    </div>
+    <div class="stat-value income">₹{{ total_income|floatformat:2 }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="d-flex align-center justify-between">
+      <span class="stat-label">Expenses (this month)</span>
+      <div class="stat-icon expense"><i class="bi bi-arrow-up-circle"></i></div>
+    </div>
+    <div class="stat-value expense">₹{{ total_expense|floatformat:2 }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="d-flex align-center justify-between">
+      <span class="stat-label">Net Balance</span>
+      <div class="stat-icon balance"><i class="bi bi-bank"></i></div>
+    </div>
+    <div class="stat-value net {% if net_balance >= 0 %}positive{% else %}negative{% endif %}">
+      ₹{{ net_balance|floatformat:2 }}
+    </div>
+  </div>
+</div>
+
+<!-- Charts + Recent Transactions -->
+<div class="dashboard-grid">
+
+  <!-- Monthly Trend -->
+  <div class="card">
+    <div class="card-header-plain">
+      <span class="card-title">Monthly Trend</span>
+      <span style="font-size:12px;color:var(--text-muted);">Last 6 months</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-container" style="height:220px;">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spending by Category -->
+  <div class="card">
+    <div class="card-header-plain">
+      <span class="card-title">Spending by Category</span>
+      <span style="font-size:12px;color:var(--text-muted);">This month</span>
+    </div>
+    <div class="card-body">
+      {% if spending_by_cat %}
+      <div class="chart-container" style="height:220px;">
+        <canvas id="pieChart"></canvas>
+      </div>
+      {% else %}
+      <div class="empty-state" style="padding:32px 0;">
+        <i class="bi bi-pie-chart"></i>
+        <p>No expense data yet this month.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="card">
+    <div class="card-header-plain">
+      <span class="card-title">Recent Transactions</span>
+      <a href="{% url 'transaction_list' %}" style="font-size:12.5px;color:var(--primary);text-decoration:none;">View all →</a>
+    </div>
+    <div class="card-body-sm">
+      {% if recent_transactions %}
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th style="text-align:right;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tx in recent_transactions %}
+          <tr>
+            <td>{{ tx.description|default:"—" }}</td>
+            <td>
+              {% if tx.category %}
+              <span class="badge-{{ tx.category.type }}">{{ tx.category.name }}</span>
+              {% else %}—{% endif %}
+            </td>
+            <td style="color:var(--text-muted);">{{ tx.date|date:"d M" }}</td>
+            <td style="text-align:right;" class="amount-{{ tx.category.type|default:'expense' }}">
+              {% if tx.is_income %}+{% else %}-{% endif %}₹{{ tx.amount|floatformat:2 }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state" style="padding:28px 0;">
+        <i class="bi bi-receipt"></i>
+        <p>No transactions yet.</p>
+        <a href="{% url 'transaction_add' %}" class="btn btn-primary btn-sm">Add your first</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Budget Overview -->
+  <div class="card">
+    <div class="card-header-plain">
+      <span class="card-title">Budget Overview</span>
+      <a href="{% url 'budget_list' %}" style="font-size:12.5px;color:var(--primary);text-decoration:none;">Manage →</a>
+    </div>
+    <div class="card-body">
+      {% if budgets %}
+        {% for b in budgets %}
+        {% with spent=b.get_spent pct=b.get_percentage %}
+        <div style="margin-bottom:16px;">
+          <div class="d-flex align-center justify-between mb-1">
+            <span style="font-size:13px;font-weight:500;">{{ b.category.name }}</span>
+            <span style="font-size:12px;color:var(--text-muted);">₹{{ spent|floatformat:0 }} / ₹{{ b.monthly_limit|floatformat:0 }}</span>
+          </div>
+          <div class="budget-bar">
+            <div class="budget-bar-fill {% if pct >= 100 %}danger{% elif pct >= 75 %}warn{% else %}safe{% endif %}"
+                 style="width:{{ pct }}%"></div>
+          </div>
+          <div style="font-size:11.5px;color:var(--text-muted);margin-top:3px;">{{ pct }}% used</div>
+        </div>
+        {% endwith %}
+        {% endfor %}
+      {% else %}
+      <div class="empty-state" style="padding:28px 0;">
+        <i class="bi bi-wallet2"></i>
+        <p>No budgets set for this month.</p>
+        <a href="{% url 'budget_add' %}" class="btn btn-primary btn-sm">Set a budget</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const trend = {{ monthly_trend|safe }};
+
+// Bar chart — monthly trend
+const trendCtx = document.getElementById('trendChart');
+if (trendCtx) {
+  new Chart(trendCtx, {
+    type: 'bar',
+    data: {
+      labels: trend.map(d => d.label),
+      datasets: [
+        {
+          label: 'Income',
+          data: trend.map(d => d.income),
+          backgroundColor: '#dcfce7',
+          borderColor: '#16a34a',
+          borderWidth: 1.5,
+          borderRadius: 4,
+        },
+        {
+          label: 'Expense',
+          data: trend.map(d => d.expense),
+          backgroundColor: '#fee2e2',
+          borderColor: '#dc2626',
+          borderWidth: 1.5,
+          borderRadius: 4,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: '#f3f4f6' },
+          ticks: { callback: v => '₹' + v.toLocaleString() }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+// Pie chart — spending by category
+const pieCtx = document.getElementById('pieChart');
+if (pieCtx) {
+  const catData = [{% for c in spending_by_cat %}{ label: "{{ c.category__name }}", value: {{ c.total }} },{% endfor %}];
+  const palette = ['#3b82f6','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899','#14b8a6','#f97316'];
+  new Chart(pieCtx, {
+    type: 'doughnut',
+    data: {
+      labels: catData.map(d => d.label),
+      datasets: [{
+        data: catData.map(d => d.value),
+        backgroundColor: palette,
+        borderWidth: 2,
+        borderColor: '#fff',
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: { legend: { position: 'right' } }
+    }
+  });
+}
+</script>
+{% endblock %}

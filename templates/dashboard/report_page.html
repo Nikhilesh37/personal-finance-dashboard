@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}PDF Report — FinanceTrack{% endblock %}
+{% block page_title %}PDF Report{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>PDF Report</h1>
+  <p>Select a month and download your financial report.</p>
+</div>
+
+<!-- Month selector form -->
+<div class="card form-section" style="margin-bottom: 24px;">
+  <div class="card-body">
+    <form method="get" class="d-flex align-center gap-2" style="flex-wrap:wrap;">
+      <div>
+        <label class="form-label" style="display:block;margin-bottom:4px;">Select Month</label>
+        <input type="month" name="month" class="form-control" value="{{ month_filter }}" />
+      </div>
+      <div style="align-self:flex-end;">
+        <button type="submit" class="btn btn-outline">
+          <i class="bi bi-eye"></i> Preview
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Summary for selected month -->
+<div class="stat-cards" style="margin-bottom:24px;">
+  <div class="stat-card">
+    <span class="stat-label">Income — {{ selected_month|date:"F Y" }}</span>
+    <div class="stat-value income">₹{{ total_income|floatformat:2 }}</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Expenses — {{ selected_month|date:"F Y" }}</span>
+    <div class="stat-value expense">₹{{ total_expense|floatformat:2 }}</div>
+  </div>
+  <div class="stat-card">
+    <span class="stat-label">Net</span>
+    <div class="stat-value net {% if net >= 0 %}positive{% else %}negative{% endif %}">
+      ₹{{ net|floatformat:2 }}
+    </div>
+  </div>
+</div>
+
+<!-- Transaction preview table -->
+<div class="card" style="margin-bottom:24px;">
+  <div class="card-header-plain">
+    <span class="card-title">Transactions for {{ selected_month|date:"F Y" }}</span>
+    <span style="font-size:12px;color:var(--text-muted);">{{ transactions.count }} record{{ transactions.count|pluralize }}</span>
+  </div>
+  <div class="card-body" style="padding:0;">
+    {% if transactions %}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Type</th>
+          <th style="text-align:right;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tx in transactions %}
+        <tr>
+          <td style="color:var(--text-muted);white-space:nowrap;">{{ tx.date|date:"d M Y" }}</td>
+          <td>{{ tx.description|default:"—" }}</td>
+          <td>{{ tx.category.name|default:"—" }}</td>
+          <td>
+            {% if tx.category %}
+            <span class="badge-{{ tx.category.type }}">{{ tx.category.get_type_display }}</span>
+            {% else %}—{% endif %}
+          </td>
+          <td style="text-align:right;" class="amount-{{ tx.category.type|default:'expense' }}">
+            {% if tx.is_income %}+{% else %}-{% endif %}₹{{ tx.amount|floatformat:2 }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <i class="bi bi-receipt"></i>
+      <p>No transactions found for {{ selected_month|date:"F Y" }}.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Action buttons -->
+<div class="d-flex gap-2" style="flex-wrap:wrap;">
+  <a href="{% url 'pdf_download' %}?month={{ month_filter }}"
+     class="btn btn-primary">
+    <i class="bi bi-file-earmark-pdf"></i>
+    Download PDF
+  </a>
+  <a href="{% url 'dashboard' %}" class="btn btn-outline">
+    <i class="bi bi-arrow-left"></i> Back to Dashboard
+  </a>
+</div>
+
+{% if not pdf_available %}
+<div class="alert-toast alert-warning" style="margin-top:16px;max-width:560px;">
+  <i class="bi bi-exclamation-triangle"></i>
+  <span>
+    <strong>PDF library not installed.</strong>
+    Run <code>pip install xhtml2pdf</code> to enable PDF downloads.
+  </span>
+</div>
+{% endif %}
+
+{% endblock %}

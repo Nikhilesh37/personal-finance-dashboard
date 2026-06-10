@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — FinanceTrack{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="page-header"><h1>{{ title }}</h1></div>
+
+<div class="card form-section">
+  <div class="card-body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label" for="id_name">Name</label>
+        {{ form.name }}
+        {% if form.name.errors %}<div class="text-danger mt-1" style="font-size:12px;">{{ form.name.errors|join:", " }}</div>{% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="id_type">Type</label>
+        {{ form.type }}
+        {% if form.type.errors %}<div class="text-danger mt-1" style="font-size:12px;">{{ form.type.errors|join:", " }}</div>{% endif %}
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label" for="id_icon">Icon</label>
+        {{ form.icon }}
+        {% if form.icon.errors %}<div class="text-danger mt-1" style="font-size:12px;">{{ form.icon.errors|join:", " }}</div>{% endif %}
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-lg"></i> Save
+        </button>
+        <a href="{% url 'category_list' %}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

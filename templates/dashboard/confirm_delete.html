@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Confirm Delete — FinanceTrack{% endblock %}
+{% block page_title %}Delete{% endblock %}
+
+{% block content %}
+<div class="delete-confirm-box">
+  <h1 style="font-size:18px;font-weight:700;color:#dc2626;margin-bottom:8px;">
+    <i class="bi bi-exclamation-triangle-fill"></i> Confirm Delete
+  </h1>
+  <p style="font-size:14px;color:#374151;margin-bottom:20px;">
+    Are you sure you want to delete
+    <strong>{{ object }}</strong>?
+    {% if type == 'category' %}
+    <br><span style="font-size:12.5px;color:#6b7280;">Transactions in this category will lose their category assignment.</span>
+    {% endif %}
+    This action cannot be undone.
+  </p>
+
+  <form method="post" class="d-flex gap-2">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">
+      <i class="bi bi-trash"></i> Yes, Delete
+    </button>
+    <a href="javascript:history.back()" class="btn btn-outline">Cancel</a>
+  </form>
+</div>
+{% endblock %}

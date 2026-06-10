@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Categories — FinanceTrack{% endblock %}
+{% block page_title %}Categories{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Categories</h1>
+  <p>Organize your transactions with custom categories.</p>
+</div>
+
+<div class="action-row">
+  <div></div>
+  <a href="{% url 'category_add' %}" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg"></i> New Category
+  </a>
+</div>
+
+<div class="card">
+  <div class="card-body" style="padding:0;">
+    {% if categories %}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Transactions</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cat in categories %}
+        <tr>
+          <td>
+            <div class="d-flex align-center gap-2">
+              <div class="cat-icon {{ cat.type }}"><i class="bi {{ cat.icon }}"></i></div>
+              <span style="font-weight:500;">{{ cat.name }}</span>
+            </div>
+          </td>
+          <td><span class="badge-{{ cat.type }}">{{ cat.get_type_display }}</span></td>
+          <td style="color:var(--text-muted);">{{ cat.transactions.count }}</td>
+          <td style="text-align:right;">
+            <a href="{% url 'category_edit' cat.pk %}" class="btn btn-outline btn-icon btn-sm" title="Edit">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'category_delete' cat.pk %}" class="btn btn-outline btn-icon btn-sm" title="Delete" style="margin-left:4px;">
+              <i class="bi bi-trash" style="color:var(--danger);"></i>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <i class="bi bi-tags"></i>
+      <p>No categories yet. Create your first one.</p>
+      <a href="{% url 'category_add' %}" class="btn btn-primary btn-sm">Add Category</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

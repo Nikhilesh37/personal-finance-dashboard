@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Financial Report</title>
+<style>
+  @page {
+    size: A4;
+    margin: 2cm 2cm 2cm 2cm;
+  }
+  body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    color: #111111;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ── Screen-only toolbar (hidden when PDF is generated) ── */
+  .toolbar {
+    background: #1e2330;
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .toolbar span { color: #9ca3af; font-size: 13px; flex: 1; }
+  .btn-back, .btn-print {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+  }
+  .btn-back  { background: #374151; color: #e5e7eb; }
+  .btn-print { background: #2563eb; color: #ffffff; }
+  @media print { .toolbar { display: none !important; } }
+
+  /* ── PDF content ── */
+  .page { padding: 0; }
+
+  h1 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1e2330;
+    margin: 0 0 4px 0;
+  }
+  .subtitle {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 20px;
+  }
+
+  .summary {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+  }
+  .summary td {
+    width: 33%;
+    border: 1px solid #e5e7eb;
+    padding: 12px 16px;
+    vertical-align: top;
+  }
+  .summary-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .summary-value {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .income-val  { color: #16a34a; }
+  .expense-val { color: #dc2626; }
+  .neutral-val { color: #2563eb; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: #1e2330;
+    margin-bottom: 8px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 6px;
+  }
+
+  table.tx-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  table.tx-table thead tr {
+    background: #f9fafb;
+    border-bottom: 1px solid #d1d5db;
+  }
+  table.tx-table th {
+    text-align: left;
+    padding: 7px 10px;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #6b7280;
+    letter-spacing: 0.4px;
+  }
+  table.tx-table td {
+    padding: 9px 10px;
+    font-size: 11.5px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+  }
+  table.tx-table .right { text-align: right; }
+  .inc { color: #16a34a; font-weight: 600; }
+  .exp { color: #dc2626; font-weight: 600; }
+
+  .footer {
+    margin-top: 28px;
+    font-size: 10px;
+    color: #9ca3af;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Toolbar — shown on screen only, hidden in PDF output -->
+<div class="toolbar">
+  <span>Report Preview &mdash; {{ selected_month|date:"F Y" }}</span>
+  <a href="javascript:history.back()" class="btn-back">&#8592; Back</a>
+  <button onclick="window.print()" class="btn-print">&#128438; Print / Save as PDF</button>
+</div>
+
+<div class="page">
+
+  <h1>Financial Report</h1>
+  <div class="subtitle">{{ selected_month|date:"F Y" }} &mdash; {{ user.username }}</div>
+
+  <!-- Summary boxes using table layout (xhtml2pdf compatible) -->
+  <table class="summary">
+    <tr>
+      <td>
+        <span class="summary-label">Total Income</span>
+        <span class="summary-value income-val">Rs. {{ total_income|floatformat:2 }}</span>
+      </td>
+      <td>
+        <span class="summary-label">Total Expenses</span>
+        <span class="summary-value expense-val">Rs. {{ total_expense|floatformat:2 }}</span>
+      </td>
+      <td>
+        <span class="summary-label">Net Balance</span>
+        <span class="summary-value neutral-val">Rs. {{ net|floatformat:2 }}</span>
+      </td>
+    </tr>
+  </table>
+
+  <div class="section-title">Transaction Details</div>
+
+  <table class="tx-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Category</th>
+        <th>Type</th>
+        <th class="right">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tx in transactions %}
+      <tr>
+        <td>{{ tx.date|date:"d M Y" }}</td>
+        <td>{{ tx.description|default:"—" }}</td>
+        <td>{{ tx.category.name|default:"—" }}</td>
+        <td>{{ tx.category.get_type_display|default:"—" }}</td>
+        <td class="right {% if tx.is_income %}inc{% else %}exp{% endif %}">
+          {% if tx.is_income %}+{% else %}-{% endif %}Rs. {{ tx.amount|floatformat:2 }}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" style="text-align:center;color:#9ca3af;padding:20px;">
+          No transactions for this period.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="footer">
+    Generated on {{ generated_at|date:"d M Y, H:i" }} &bull; FinanceTrack
+  </div>
+
+</div>
+</body>
+</html>

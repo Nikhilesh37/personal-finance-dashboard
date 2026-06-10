@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Import CSV — FinanceTrack{% endblock %}
+{% block page_title %}Import CSV{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Import Transactions</h1>
+  <p>Upload a CSV file to bulk-import transactions.</p>
+</div>
+
+<div class="card form-section">
+  <div class="card-body">
+    <!-- Format guide -->
+    <div style="background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;">
+      <p style="font-size:13px;font-weight:600;margin-bottom:6px;">Expected CSV format</p>
+      <code style="font-size:12.5px;color:var(--text-muted);">date, amount, category, description</code><br>
+      <code style="font-size:12.5px;color:var(--text-muted);">2024-01-15, 5000, Salary, Monthly salary</code>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:8px;">
+        Date format: <strong>YYYY-MM-DD</strong>. Category must match an existing category name.
+      </p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="mb-4">
+        <label class="form-label">CSV File</label>
+        {{ form.csv_file }}
+        {% if form.csv_file.errors %}<div class="text-danger mt-1" style="font-size:12px;">{{ form.csv_file.errors|join:", " }}</div>{% endif %}
+      </div>
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-upload"></i> Import
+        </button>
+        <a href="{% url 'transaction_list' %}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+
+    {% if errors %}
+    <div style="margin-top:20px;">
+      <p style="font-size:13px;font-weight:600;color:var(--danger);">Row errors:</p>
+      <ul style="font-size:12.5px;color:var(--text-muted);padding-left:16px;">
+        {% for err in errors %}<li>{{ err }}</li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

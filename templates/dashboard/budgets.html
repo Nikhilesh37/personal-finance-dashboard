@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Budgets — FinanceTrack{% endblock %}
+{% block page_title %}Budgets{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Budgets</h1>
+  <p>Set monthly spending limits per category.</p>
+</div>
+
+<div class="action-row">
+  <form method="get" class="filter-row">
+    <input type="month" name="month" class="form-control" style="width:160px;"
+           value="{{ month_filter }}" onchange="this.form.submit()" />
+  </form>
+  <a href="{% url 'budget_add' %}" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg"></i> Set Budget
+  </a>
+</div>
+
+<div class="card">
+  <div class="card-body" style="padding:0;">
+    {% if budget_data %}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Limit</th>
+          <th>Spent</th>
+          <th>Remaining</th>
+          <th style="min-width:160px;">Progress</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in budget_data %}
+        <tr>
+          <td>
+            <div class="d-flex align-center gap-2">
+              <div class="cat-icon expense"><i class="bi {{ item.budget.category.icon }}"></i></div>
+              {{ item.budget.category.name }}
+            </div>
+          </td>
+          <td style="font-weight:500;">₹{{ item.budget.monthly_limit|floatformat:0 }}</td>
+          <td class="{% if item.over %}text-danger{% endif %}">₹{{ item.spent|floatformat:0 }}</td>
+          <td class="{% if item.over %}text-danger{% else %}text-success{% endif %}">
+            {% if item.over %}<i class="bi bi-exclamation-triangle"></i> Over budget{% else %}₹{{ item.remaining|floatformat:0 }}{% endif %}
+          </td>
+          <td>
+            <div class="budget-bar" style="width:140px;">
+              <div class="budget-bar-fill {% if item.percentage >= 100 %}danger{% elif item.percentage >= 75 %}warn{% else %}safe{% endif %}"
+                   style="width:{{ item.percentage }}%"></div>
+            </div>
+            <span style="font-size:11.5px;color:var(--text-muted);">{{ item.percentage }}%</span>
+          </td>
+          <td style="text-align:right;">
+            <a href="{% url 'budget_edit' item.budget.pk %}" class="btn btn-outline btn-icon btn-sm" title="Edit">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'budget_delete' item.budget.pk %}" class="btn btn-outline btn-icon btn-sm" title="Delete" style="margin-left:4px;">
+              <i class="bi bi-trash" style="color:var(--danger);"></i>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <i class="bi bi-wallet2"></i>
+      <p>No budgets set for {{ selected_month|date:"F Y" }}.</p>
+      <a href="{% url 'budget_add' %}" class="btn btn-primary btn-sm">Set a Budget</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

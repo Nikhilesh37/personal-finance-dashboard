@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Login — FinanceTrack{% endblock %}
+
+{% block auth_content %}
+<div class="auth-wrapper">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <i class="bi bi-bar-chart-fill"></i>
+      <span>FinanceTrack</span>
+    </div>
+    <h1 class="auth-heading">Sign in</h1>
+    <p class="auth-sub">Track your money, take control.</p>
+
+    {% if form.non_field_errors %}
+    <div class="alert-toast alert-danger mb-4" style="margin-bottom:16px;">
+      <i class="bi bi-x-circle"></i>
+      <span>{{ form.non_field_errors|join:", " }}</span>
+    </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label" for="id_username">Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}<div class="text-danger mt-1" style="font-size:12px;">{{ form.username.errors|join:", " }}</div>{% endif %}
+      </div>
+      <div class="mb-4">
+        <label class="form-label" for="id_password">Password</label>
+        {{ form.password }}
+        {% if form.password.errors %}<div class="text-danger mt-1" style="font-size:12px;">{{ form.password.errors|join:", " }}</div>{% endif %}
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+        Sign in <i class="bi bi-arrow-right"></i>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="{% url 'register' %}">Create one</a>
+    </div>
+  </div>
+</div>
+{% endblock auth_content %}
