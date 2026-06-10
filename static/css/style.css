@@ -1,7 +1,4 @@
-/* ===================================================
-   FinanceTrack — Custom Stylesheet
-   Clean, functional design with a human touch
-   =================================================== */
+
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -44,14 +41,12 @@ html, body {
   line-height: 1.5;
 }
 
-/* ─── SCROLLBAR ─── */
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
 
-/* ═══════════════════════════════════════════════════
-   SIDEBAR
-   ═══════════════════════════════════════════════════ */
+
 .sidebar {
   position: fixed;
   top: 0; left: 0;
@@ -173,9 +168,7 @@ html, body {
 }
 .logout-link:hover { color: #9ca3af; }
 
-/* ═══════════════════════════════════════════════════
-   MAIN LAYOUT
-   ═══════════════════════════════════════════════════ */
+
 .main-wrapper {
   margin-left: var(--sidebar-w);
   min-height: 100vh;
@@ -234,9 +227,7 @@ html, body {
   padding: 24px;
 }
 
-/* ═══════════════════════════════════════════════════
-   FLASH MESSAGES
-   ═══════════════════════════════════════════════════ */
+
 .messages-container {
   display: flex;
   flex-direction: column;
@@ -267,9 +258,7 @@ html, body {
 }
 .toast-close:hover { opacity: 1; }
 
-/* ═══════════════════════════════════════════════════
-   CARDS
-   ═══════════════════════════════════════════════════ */
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -293,9 +282,7 @@ html, body {
 .card-body { padding: 20px; }
 .card-body-sm { padding: 16px 20px; }
 
-/* ═══════════════════════════════════════════════════
-   STAT CARDS
-   ═══════════════════════════════════════════════════ */
+
 .stat-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -345,9 +332,7 @@ html, body {
 .stat-icon.expense { background: #fee2e2; color: var(--danger); }
 .stat-icon.balance { background: #dbeafe; color: var(--primary); }
 
-/* ═══════════════════════════════════════════════════
-   TABLES
-   ═══════════════════════════════════════════════════ */
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -378,15 +363,11 @@ html, body {
 
 .data-table tbody tr:hover { background: #fafafa; }
 
-/* ═══════════════════════════════════════════════════
-   BADGES / PILLS
-   ═══════════════════════════════════════════════════ */
+
 .badge-income  { background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
 .badge-expense { background: #fee2e2; color: #dc2626; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
 
-/* ═══════════════════════════════════════════════════
-   BUDGET PROGRESS
-   ═══════════════════════════════════════════════════ */
+
 .budget-bar {
   height: 8px;
   background: #e5e7eb;
@@ -405,9 +386,7 @@ html, body {
 .budget-bar-fill.warn   { background: var(--warning); }
 .budget-bar-fill.danger { background: var(--danger); }
 
-/* ═══════════════════════════════════════════════════
-   FORMS
-   ═══════════════════════════════════════════════════ */
+
 .form-section {
   max-width: 560px;
 }
@@ -435,9 +414,7 @@ html, body {
   outline: none;
 }
 
-/* ═══════════════════════════════════════════════════
-   BUTTONS
-   ═══════════════════════════════════════════════════ */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -473,9 +450,7 @@ html, body {
   border-radius: 6px;
 }
 
-/* ═══════════════════════════════════════════════════
-   ACTION ROW
-   ═══════════════════════════════════════════════════ */
+
 .action-row {
   display: flex;
   align-items: center;
@@ -499,16 +474,12 @@ html, body {
   height: auto;
 }
 
-/* ═══════════════════════════════════════════════════
-   CHART WRAPPERS
-   ═══════════════════════════════════════════════════ */
+
 .chart-container {
   position: relative;
 }
 
-/* ═══════════════════════════════════════════════════
-   AUTH PAGES
-   ═══════════════════════════════════════════════════ */
+
 .auth-wrapper {
   min-height: 100vh;
   display: flex;
@@ -569,9 +540,7 @@ html, body {
 .auth-footer a { color: var(--primary); text-decoration: none; font-weight: 500; }
 .auth-footer a:hover { text-decoration: underline; }
 
-/* ═══════════════════════════════════════════════════
-   CATEGORY ICON CARD
-   ═══════════════════════════════════════════════════ */
+
 .cat-icon {
   width: 32px; height: 32px;
   display: inline-flex; align-items: center; justify-content: center;
@@ -582,9 +551,7 @@ html, body {
 .cat-icon.income  { background: #dcfce7; color: var(--success); }
 .cat-icon.expense { background: #fee2e2; color: var(--danger); }
 
-/* ═══════════════════════════════════════════════════
-   EMPTY STATE
-   ═══════════════════════════════════════════════════ */
+
 .empty-state {
   text-align: center;
   padding: 48px 24px;
@@ -593,9 +560,7 @@ html, body {
 .empty-state i { font-size: 40px; display: block; margin-bottom: 12px; opacity: .4; }
 .empty-state p { font-size: 14px; margin-bottom: 16px; }
 
-/* ═══════════════════════════════════════════════════
-   PAGE HEADER
-   ═══════════════════════════════════════════════════ */
+
 .page-header {
   margin-bottom: 24px;
 }
@@ -613,15 +578,11 @@ html, body {
   margin-top: 3px;
 }
 
-/* ═══════════════════════════════════════════════════
-   AMOUNT DISPLAY
-   ═══════════════════════════════════════════════════ */
+
 .amount-income  { color: var(--success); font-weight: 600; }
 .amount-expense { color: var(--danger);  font-weight: 600; }
 
-/* ═══════════════════════════════════════════════════
-   MOBILE RESPONSIVE
-   ═══════════════════════════════════════════════════ */
+
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -662,9 +623,7 @@ html, body {
   .action-row { flex-direction: column; align-items: stretch; }
 }
 
-/* ═══════════════════════════════════════════════════
-   DASHBOARD GRID
-   ═══════════════════════════════════════════════════ */
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -679,9 +638,7 @@ html, body {
   .dashboard-grid { grid-template-columns: 1fr; }
 }
 
-/* ═══════════════════════════════════════════════════
-   MISC
-   ═══════════════════════════════════════════════════ */
+
 .text-muted   { color: var(--text-muted) !important; }
 .text-success { color: var(--success) !important; }
 .text-danger  { color: var(--danger) !important; }
@@ -704,7 +661,7 @@ a { color: var(--primary); }
 .align-center { align-items: center; }
 .justify-between { justify-content: space-between; }
 
-/* Confirm delete box */
+
 .delete-confirm-box {
   background: #fef2f2;
   border: 1px solid #fecaca;

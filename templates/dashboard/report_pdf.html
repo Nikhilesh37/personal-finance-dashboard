@@ -130,7 +130,7 @@
 </head>
 <body>
 
-<!-- Toolbar — shown on screen only, hidden in PDF output -->
+
 <div class="toolbar">
   <span>Report Preview &mdash; {{ selected_month|date:"F Y" }}</span>
   <a href="javascript:history.back()" class="btn-back">&#8592; Back</a>
@@ -142,7 +142,7 @@
   <h1>Financial Report</h1>
   <div class="subtitle">{{ selected_month|date:"F Y" }} &mdash; {{ user.username }}</div>
 
-  <!-- Summary boxes using table layout (xhtml2pdf compatible) -->
+  
   <table class="summary">
     <tr>
       <td>

@@ -59,7 +59,7 @@ class Budget(models.Model):
         return f"{self.category.name} budget for {self.month.strftime('%B %Y')}"
 
     def get_spent(self):
-        """Return total spent in this category for this month."""
+        
         return self.category.transactions.filter(
             user=self.user,
             date__year=self.month.year,
@@ -67,7 +67,7 @@ class Budget(models.Model):
         ).aggregate(total=models.Sum('amount'))['total'] or 0
 
     def get_percentage(self):
-        """Return percentage used of the budget limit."""
+        
         if self.monthly_limit == 0:
             return 0
         spent = self.get_spent()

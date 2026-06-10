@@ -1,6 +1,4 @@
-"""
-Django settings for finance_project project.
-"""
+
 
 from pathlib import Path
 import os

@@ -58,7 +58,7 @@ def logout_view(request):
 
 
 def _create_default_categories(user):
-    """Seed default income and expense categories for a new user."""
+    
     defaults = [
         ('Salary', 'income', 'bi-briefcase'),
         ('Freelance', 'income', 'bi-laptop'),
@@ -397,7 +397,7 @@ def csv_import(request):
 
 @login_required
 def pdf_report_page(request):
-    """Landing page — lets the user pick a month then click Download."""
+    
     today = datetime.date.today()
     month_filter = request.GET.get('month', today.strftime('%Y-%m'))
     try:
@@ -429,7 +429,7 @@ def pdf_report_page(request):
 
 @login_required
 def pdf_download(request):
-    """Generate and serve a PDF using xhtml2pdf."""
+    
     today = datetime.date.today()
     month_filter = request.GET.get('month', today.strftime('%Y-%m'))
     try:
@@ -487,6 +487,6 @@ def pdf_download(request):
 
 @login_required
 def chart_data(request):
-    """Return JSON data for the dashboard chart."""
+    
     trend = _get_monthly_trend(request.user, 6)
     return JsonResponse({'trend': trend})

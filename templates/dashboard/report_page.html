@@ -8,7 +8,7 @@
   <p>Select a month and download your financial report.</p>
 </div>
 
-<!-- Month selector form -->
+
 <div class="card form-section" style="margin-bottom: 24px;">
   <div class="card-body">
     <form method="get" class="d-flex align-center gap-2" style="flex-wrap:wrap;">
@@ -25,7 +25,7 @@
   </div>
 </div>
 
-<!-- Summary for selected month -->
+
 <div class="stat-cards" style="margin-bottom:24px;">
   <div class="stat-card">
     <span class="stat-label">Income — {{ selected_month|date:"F Y" }}</span>
@@ -43,7 +43,7 @@
   </div>
 </div>
 
-<!-- Transaction preview table -->
+
 <div class="card" style="margin-bottom:24px;">
   <div class="card-header-plain">
     <span class="card-title">Transactions for {{ selected_month|date:"F Y" }}</span>
@@ -88,7 +88,7 @@
   </div>
 </div>
 
-<!-- Action buttons -->
+
 <div class="d-flex gap-2" style="flex-wrap:wrap;">
   <a href="{% url 'pdf_download' %}?month={{ month_filter }}"
      class="btn btn-primary">
